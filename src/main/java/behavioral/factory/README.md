@@ -1,1 +1,1 @@
-![Alt text](img/factory_pattern_uml_diagram.jpg)
+![Alt text](/img/factory_pattern_uml_diagram.jpg)
