@@ -1,1 +1,1 @@
-![但是](../../../../../img/factory_pattern_uml_diagram.jpg)
+![工厂模式类图](../../../../../img/factory_pattern_uml_diagram.jpg)
