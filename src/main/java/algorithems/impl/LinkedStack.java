@@ -1,4 +1,6 @@
-package algorithems;
+package algorithems.impl;
+
+import algorithems.Stack;
 
 /**
  * @author pengfei.cheng
