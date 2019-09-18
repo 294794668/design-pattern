@@ -9,12 +9,6 @@
     <packaging>pom</packaging>
     <name>design-pattern</name>
 
-    <!-- <modules>
-        <module>fs-web-biz</module>
-        <module>fs-web-client</module>
-        <module>fs-web</module>
-    </modules> -->
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
