@@ -56,7 +56,7 @@ public class CountDownLatchDemo {
         }
 
         void doWork() {
-//            System.out.println(anInt + "-do work");
+            System.out.println(anInt + "-do work");
         }
     }
 
