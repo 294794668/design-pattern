@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ProducerAndConsumer {
 
     private static volatile Queue<Integer> queue = new LinkedBlockingQueue<>(10);
-    private static volatile AtomicInteger atomicInteger = new AtomicInteger();
+    private static volatile AtomicInteger atomicInteger = new AtomicInteger(0);
     private ReentrantLock lock = new ReentrantLock();
     private Condition pc = lock.newCondition();
     private Condition cc = lock.newCondition();
@@ -31,14 +31,13 @@ public class ProducerAndConsumer {
         public void run() {
             lock.lock();
             try {
-                if (atomicInteger.get() == 10) {
+                if (atomicInteger.incrementAndGet() == 5) {
                     cc.signalAll();
                     pc.await();
                 }
-                System.out.println("put" + i);
-                atomicInteger.incrementAndGet();
+                System.out.println("+++" + i);
                 queue.add(i);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 lock.unlock();
@@ -51,13 +50,12 @@ public class ProducerAndConsumer {
         public void run() {
             lock.lock();
             try {
-                if (atomicInteger.get() == 0) {
+                if (atomicInteger.decrementAndGet() == 0) {
                     pc.signalAll();
                     cc.await();
                 }
-                System.out.println("get" + queue.poll());
-                atomicInteger.decrementAndGet();
-            } catch (InterruptedException e) {
+                System.out.println("---" + queue.poll());
+            } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 lock.unlock();
