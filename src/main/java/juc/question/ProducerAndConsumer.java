@@ -15,9 +15,10 @@ public class ProducerAndConsumer {
 
     private static volatile Queue<Integer> queue = new LinkedBlockingQueue<>(10);
     private static volatile AtomicInteger atomicInteger = new AtomicInteger(0);
-    private ReentrantLock lock = new ReentrantLock();
-    private Condition pc = lock.newCondition();
-    private Condition cc = lock.newCondition();
+    private ReentrantLock pl = new ReentrantLock();
+    private ReentrantLock cl = new ReentrantLock();
+    private Condition pc = pl.newCondition();
+    private Condition cc = cl.newCondition();
 
     public class Producer implements Runnable {
 
@@ -29,36 +30,65 @@ public class ProducerAndConsumer {
 
         @Override
         public void run() {
-            lock.lock();
+            pl.lock();
+            int c = -1;
             try {
-                if (atomicInteger.incrementAndGet() == 5) {
-                    cc.signalAll();
+                while (atomicInteger.get() == 10) {
                     pc.await();
                 }
                 System.out.println("+++" + i);
                 queue.add(i);
+                c = atomicInteger.incrementAndGet();
+                if (c < 10) {
+                    pc.signal();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                lock.unlock();
+                pl.unlock();
             }
+            if (c == 10) {
+                try {
+                    cl.lock();
+                    cc.signal();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    cl.unlock();
+                }
+            }
+
         }
     }
 
     public class Consumer implements Runnable {
         @Override
         public void run() {
-            lock.lock();
+            cl.lock();
+            int c = -1;
             try {
-                if (atomicInteger.decrementAndGet() == 0) {
-                    pc.signalAll();
+                while (atomicInteger.get() == 0) {
                     cc.await();
                 }
                 System.out.println("---" + queue.poll());
+                c = atomicInteger.decrementAndGet();
+                if (c > 0) {
+                    cc.signal();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                lock.unlock();
+                cl.unlock();
+            }
+            if (c == 0) {
+                try {
+                    pl.lock();
+                    pc.signal();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    pl.unlock();
+                }
             }
         }
     }

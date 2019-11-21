@@ -1,3 +1,4 @@
 .idea
 *.iml
 *.class
+/target/classes/META-INF/design-pattern.kotlin_module
